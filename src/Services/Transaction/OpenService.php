@@ -16,16 +16,16 @@ class OpenService implements TransactionInterface
 
     public function create(array $data): ResponseWrapper
     {
-        return $this->client->post('/open-payment/create', $data);
+        return $this->client->post('open-payment/create', $data);
     }
 
     public function detail(string $reference): ResponseWrapper
     {
-        return $this->client->get("/open-payment/{$reference}/detail");
+        return $this->client->get("open-payment/{$reference}/detail");
     }
 
     public function status(array $payload): ResponseWrapper
     {
-        return $this->client->get("/open-payment/{$payload['reference']}/transactions", $payload);
+        return $this->client->get("open-payment/{$payload['reference']}/transactions", $payload);
     }
 }

@@ -16,6 +16,6 @@ class PaymentService implements PaymentInterface
 
     public function getInstruction(array $payload): ResponseWrapper
     {
-        return $this->client->get('/payment/instruction', $payload);
+        return $this->client->get('payment/instruction', $payload);
     }
 }

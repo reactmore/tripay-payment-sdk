@@ -16,16 +16,16 @@ class ClosedService implements TransactionInterface
 
     public function create(array $data): ResponseWrapper
     {
-        return $this->client->post('/transaction/create', $data);
+        return $this->client->post('transaction/create', $data);
     }
 
     public function detail(string $reference): ResponseWrapper
     {
-        return $this->client->get('/transaction/detail', ['reference' => $reference]);
+        return $this->client->get('transaction/detail', ['reference' => $reference]);
     }
 
     public function status(array $payload): ResponseWrapper
     {
-        return $this->client->get('/transaction/check-status', $payload);
+        return $this->client->get('transaction/check-status', $payload);
     }
 }

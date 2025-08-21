@@ -3,39 +3,63 @@
 namespace Reactmore\TripayPaymentSdk\HTTP;
 
 use CodeIgniter\HTTP\ResponseInterface;
+use Reactmore\TripayPaymentSdk\Exceptions\InvalidResponseException;
 
 class ResponseWrapper
 {
     protected ResponseInterface $response;
+    protected mixed $decoded; // object or array
 
     public function __construct(ResponseInterface $response)
     {
         $this->response = $response;
-    }
 
-    public function toArray(): array
-    {
-        $body = (string) $this->response->getBody();
-        $data = json_decode($body, true);
+        $body = (string) $response->getBody();
+        $decoded = json_decode($body);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            return [
+            // simpan fallback object standar
+            $this->decoded = (object) [
+                'status_code' => $response->getStatusCode(),
                 'success'    => false,
                 'message'    => 'Invalid JSON from Tripay',
-                'httpStatus' => $this->response->getStatusCode(),
                 'raw'        => $body,
             ];
+        } else {
+            // tambahkan httpStatus agar selalu ada
+            $decoded->status_code = $response->getStatusCode();
+            $this->decoded = $decoded;
         }
-
-        return $data + ['httpStatus' => $this->response->getStatusCode()];
     }
 
+    /**
+     * Default: return decoded object
+     */
+    public function get(): object
+    {
+        return $this->decoded;
+    }
+
+    /**
+     * Convert response to array
+     */
+    public function toArray(): array
+    {
+        return json_decode(json_encode($this->decoded), true);
+    }
+
+    /**
+     * Convert response to json string
+     */
     public function toJson(): string
     {
-        return (string) $this->response->getBody();
+        return json_encode($this->decoded);
     }
 
-    public function toObject(): ResponseInterface
+    /**
+     * Get raw CI ResponseInterface
+     */
+    public function raw(): ResponseInterface
     {
         return $this->response;
     }
@@ -45,6 +69,17 @@ class ResponseWrapper
         return $this->response->getStatusCode();
     }
 
+    /**
+     * Magic: akses langsung property dari decoded object
+     */
+    public function __get(string $name)
+    {
+        return $this->decoded->$name ?? null;
+    }
+
+    /**
+     * Magic: return JSON kalau di-cast ke string
+     */
     public function __toString(): string
     {
         return $this->toJson();

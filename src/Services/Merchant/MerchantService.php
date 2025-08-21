@@ -2,6 +2,7 @@
 
 namespace Reactmore\TripayPaymentSdk\Services\Merchant;
 
+use Reactmore\TripayPaymentSdk\Exceptions\InvalidPayloadException;
 use Reactmore\TripayPaymentSdk\HTTP\Client;
 use Reactmore\TripayPaymentSdk\HTTP\ResponseWrapper;
 use Reactmore\TripayPaymentSdk\Validation\PayloadValidator;
@@ -17,20 +18,23 @@ class MerchantService
 
     public function getChannel(): ResponseWrapper
     {
-        return $this->client->get('/merchant/payment-channel');
+        return $this->client->get('merchant/payment-channel');
     }
 
     public function getFeeCalculator(array $payload = []): ResponseWrapper
     {
         PayloadValidator::validate($payload, [
-            'amount' => 'numeric',
+            'amount' => 'numeric|required',
+            'code' => 'string',
         ]);
 
-        return $this->client->get('/merchant/fee-calculator', $payload);
+        return $this->client->get('merchant/fee-calculator', [
+            'query' => $payload
+        ]);
     }
 
     public function getTransactionList(array $payload = []): ResponseWrapper
     {
-        return $this->client->get('/merchant/transactions', $payload);
+        return $this->client->get('merchant/transactions', $payload);
     }
 }

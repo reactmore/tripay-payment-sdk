@@ -4,6 +4,7 @@ namespace Reactmore\TripayPaymentSdk;
 
 use Reactmore\TripayPaymentSdk\Config\Tripay as TripayConfig;
 use Reactmore\TripayPaymentSdk\Exceptions\TransactionsException;
+use Reactmore\TripayPaymentSdk\Exceptions\TripayException;
 use Reactmore\TripayPaymentSdk\HTTP\Client;
 use Reactmore\TripayPaymentSdk\Services\Merchant\MerchantService;
 use Reactmore\TripayPaymentSdk\Services\Payment\PaymentService;
@@ -17,8 +18,25 @@ class Tripay
 
     public function __construct(TripayConfig $config)
     {
+        $this->validateConfig($config);
+        
         $this->config = $config;
         $this->client = new Client($config);
+    }
+
+    protected function validateConfig(TripayConfig $config): void
+    {
+        if (empty($config->apiKey)) {
+            throw new TripayException("API Key tidak boleh kosong.");
+        }
+
+        if (empty($config->privateKey)) {
+            throw new TripayException("Private Key tidak boleh kosong.");
+        }
+
+        if (empty($config->merchantCode)) {
+            throw new TripayException("Merchant Code tidak boleh kosong.");
+        }
     }
 
     public function merchant(): MerchantService
