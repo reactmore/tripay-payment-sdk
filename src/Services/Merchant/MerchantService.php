@@ -23,7 +23,7 @@ class MerchantService
     public function getFeeCalculator(array $payload = []): ResponseWrapper
     {
         PayloadValidator::validate($payload, [
-            'amount'    => 'numeric',
+            'amount' => 'numeric',
         ]);
 
         return $this->client->get('/merchant/fee-calculator', $payload);

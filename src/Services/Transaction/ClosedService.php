@@ -5,7 +5,7 @@ namespace Reactmore\TripayPaymentSdk\Services\Transaction;
 use Reactmore\TripayPaymentSdk\HTTP\Client;
 use Reactmore\TripayPaymentSdk\HTTP\ResponseWrapper;
 
-class TransactionService implements TransactionInterface
+class ClosedService implements TransactionInterface
 {
     protected Client $client;
 

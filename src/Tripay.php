@@ -3,11 +3,12 @@
 namespace Reactmore\TripayPaymentSdk;
 
 use Reactmore\TripayPaymentSdk\Config\Tripay as TripayConfig;
+use Reactmore\TripayPaymentSdk\Exceptions\TransactionsException;
 use Reactmore\TripayPaymentSdk\HTTP\Client;
 use Reactmore\TripayPaymentSdk\Services\Merchant\MerchantService;
 use Reactmore\TripayPaymentSdk\Services\Payment\PaymentService;
-use Reactmore\TripayPaymentSdk\Services\Transaction\TransactionService;
-use Reactmore\TripayPaymentSdk\Exceptions\TransactionsException;
+use Reactmore\TripayPaymentSdk\Services\Transaction\ClosedService;
+use Reactmore\TripayPaymentSdk\Services\Transaction\OpenService;
 
 class Tripay
 {
@@ -25,19 +26,17 @@ class Tripay
         return new MerchantService($this->client);
     }
 
-
-    public function transaction(string $transactionType = 'closed'): TransactionService
+    public function transaction(string $transactionType = 'closed')
     {
-        if ($transactionType == 'open') {
-            return new TransactionService($this->client);
-        }
-        
-        if ($transactionType == 'closed') {
-            return new TransactionService($this->client);
+        if ($transactionType === 'open') {
+            return new OpenService($this->client);
         }
 
-        throw new TransactionsException("metode yang digunakan tidak didukung.");
+        if ($transactionType === 'closed') {
+            return new ClosedService($this->client);
+        }
 
+        throw new TransactionsException('metode yang digunakan tidak didukung.');
     }
 
     public function payment(): PaymentService
@@ -46,24 +45,8 @@ class Tripay
     }
 
     /**
-     * Optional: magic call fallback
+     * Verify callback signature
      */
-    public function __call($name, $arguments)
-    {
-        $map = [
-            'merchant'    => MerchantService::class,
-            'transaction' => TransactionService::class,
-            'payment'     => PaymentService::class,
-        ];
-
-        if (isset($map[$name])) {
-            return new $map[$name]($this->client);
-        }
-
-        throw new \BadMethodCallException("Method {$name} not found.");
-    }
-
-    /** Verify callback signature */
     public function verifyCallback(string $rawBody, string $signatureHeader, ?string $eventHeader = null): bool
     {
         if ($eventHeader !== null && $eventHeader !== 'payment_status') {
@@ -71,6 +54,7 @@ class Tripay
         }
 
         $calc = hash_hmac('sha256', $rawBody, $this->config->privateKey);
+
         return hash_equals($calc, $signatureHeader);
     }
 }

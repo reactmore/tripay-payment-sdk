@@ -7,4 +7,6 @@ use Exception;
 /**
  * Main exception class used for exception handling
  */
-class TripayException extends Exception {}
+class TripayException extends Exception
+{
+}

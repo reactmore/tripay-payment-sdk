@@ -6,13 +6,9 @@ use CodeIgniter\Config\BaseConfig;
 
 class Tripay extends BaseConfig
 {
-   
-    public string $stage = 'sandbox';
-
-    public string $apiKey = '';
-    
-    public string $privateKey = '';
-    
+    public string $stage        = 'sandbox';
+    public string $apiKey       = '';
+    public string $privateKey   = '';
     public string $merchantCode = '';
 
     public function baseUrl(): string
