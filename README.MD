@@ -31,6 +31,7 @@ $response = $tripay->merchant()->getChannel($payload)->get();
 
 $response = $tripay->payment()->getInstruction()->get();
 
+// open for open transactions https://tripay.co.id/developer?tab=open-payment-create
 $response = $tripay->transaction('open/closed')->create($payload)->get();
 ```
 
