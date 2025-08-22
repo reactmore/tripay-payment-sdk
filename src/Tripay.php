@@ -19,7 +19,7 @@ class Tripay
     public function __construct(TripayConfig $config)
     {
         $this->validateConfig($config);
-        
+
         $this->config = $config;
         $this->client = new Client($config);
     }
@@ -47,11 +47,11 @@ class Tripay
     public function transaction(string $transactionType = 'closed')
     {
         if ($transactionType === 'open') {
-            return new OpenService($this->client);
+            return new OpenService($this->client, $this->config);
         }
 
         if ($transactionType === 'closed') {
-            return new ClosedService($this->client);
+            return new ClosedService($this->client, $this->config);
         }
 
         throw new TransactionsException('metode yang digunakan tidak didukung.');
@@ -61,6 +61,11 @@ class Tripay
     {
         return new PaymentService($this->client);
     }
+
+    /**
+     * Verify callback signature
+     */
+    
 
     /**
      * Verify callback signature
