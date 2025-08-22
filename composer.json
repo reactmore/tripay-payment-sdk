@@ -7,6 +7,12 @@
             "Reactmore\\TripayPaymentSdk\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests",
+            "Tests\\Support\\": "tests/_support"
+        }
+    },
     "authors": [
         {
             "name": "reactmore",
@@ -32,6 +38,7 @@
         }
     },
     "scripts": {
+        "test": "phpunit",
         "cs-fix": "php-cs-fixer fix --ansi --verbose --diff"
     }
 }
